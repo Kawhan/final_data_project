@@ -25,11 +25,10 @@ votacao = (
     read_tse_csv_from_zip(TSE_DATA_DIR / 'votacao_secao_2020_PB.zip',
                           'votacao_secao_2020_PB.csv')
     .query("DS_CARGO == 'Prefeito'")
-    .groupby(['NM_VOTAVEL'])
+    .groupby(['SG_UE', 'NR_VOTAVEL'])
     .agg({'QT_VOTOS': 'sum'})
-    .rename(columns={'NM_VOTAVEL': 'NM_CANDIDATO'})
+    .rename(columns={'NR_VOTAVEL': 'NR_CANDIDATO'})
 )
-
 
 receitas = (
     read_tse_csv_from_zip(
@@ -51,13 +50,13 @@ bens
 df = (
     candidatos
     # Junção usando o número do candidato
-    .join(votacao, on='NM_CANDIDATO')
+    .join(votacao, on=['SG_UE', 'NR_CANDIDATO'])
     .join(receitas)  # Junção usando o SQ_CANDIDATO
     .join(bens)
     .filter(['ANO_ELEICAO', 'SG_UF', 'DS_CARGO', 'NR_CANDIDATO', 'NM_URNA_CANDIDATO',
              'SG_PARTIDO', 'DT_NASCIMENTO', 'NR_IDADE_DATA_POSSE', 'DS_GENERO',
              'DS_GRAU_INSTRUCAO', 'DS_ESTADO_CIVIL', 'DS_COR_RACA', 'DS_OCUPACAO',
-             'DS_SIT_TOT_TURNO', 'QT_VOTOS', 'VR_RECEITA', 'VR_BEM_CANDIDATO', 'VR_DESPESA_MAX_CAMPANHA'
+             'DS_SIT_TOT_TURNO', 'QT_VOTOS', 'VR_RECEITA', 'VR_BEM_CANDIDATO', 'VR_DESPESA_MAX_CAMPANHA', 'NM_CANDIDATO'
              ])
 )
 df
