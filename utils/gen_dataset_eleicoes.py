@@ -47,13 +47,21 @@ bens = (
 )
 bens
 
+municipios = (
+    pd.read_csv(DATA_DIR/'municipios_brasileiros_tse.csv')
+    .query("uf == 'PB'")
+    .rename(columns={'codigo_tse': 'SG_UE', 'nome_municipio': 'NOME_MUNICIPIO'})
+)
+municipios
+
 df = (
     candidatos
     # Junção usando o número do candidato
     .join(votacao, on=['SG_UE', 'NR_CANDIDATO'])
     .join(receitas)  # Junção usando o SQ_CANDIDATO
     .join(bens)
-    .filter(['ANO_ELEICAO', 'SG_UF', 'DS_CARGO', 'NR_CANDIDATO', 'NM_URNA_CANDIDATO',
+    .join(municipios.set_index('SG_UE'), on='SG_UE')
+    .filter(['ANO_ELEICAO', 'SG_UF', 'SG_UE', 'NOME_MUNICIPIO', 'DS_CARGO', 'NR_CANDIDATO', 'NM_URNA_CANDIDATO',
              'SG_PARTIDO', 'DT_NASCIMENTO', 'NR_IDADE_DATA_POSSE', 'DS_GENERO',
              'DS_GRAU_INSTRUCAO', 'DS_ESTADO_CIVIL', 'DS_COR_RACA', 'DS_OCUPACAO',
              'DS_SIT_TOT_TURNO', 'QT_VOTOS', 'VR_RECEITA', 'VR_BEM_CANDIDATO', 'VR_DESPESA_MAX_CAMPANHA', 'NM_CANDIDATO'
