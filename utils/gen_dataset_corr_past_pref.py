@@ -31,7 +31,7 @@ municipios
 past_dataset = (
     pd.read_csv(DATA_DIR/'consulta_cand_2016_PB.csv',
                 delimiter=';', encoding='latin1')
-    .query("DS_CARGO == 'PREFEITO'")
+    .query("DS_CARGO == 'PREFEITO' & DS_SIT_TOT_TURNO == 'ELEITO'")
     .set_index('SG_UE')
     .rename(columns={'SG_PARTIDO': 'SG_PAST_PARTIDO'})
 )
